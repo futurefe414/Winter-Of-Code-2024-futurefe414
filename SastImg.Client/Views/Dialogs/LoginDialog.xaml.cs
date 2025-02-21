@@ -17,7 +17,7 @@ public sealed partial class LoginDialog : ContentDialog
     private string _password="";
 
     [ObservableProperty]
-    private bool _isLoggingIn=false;
+    private bool _isLoggingIn=true;
 
     [ObservableProperty]
     private bool _isLoginFailed = false;

@@ -33,6 +33,14 @@
                     Content="主页"
                     Icon="Home"
                     Tag="Home" />
+
+                <NavigationViewItem
+                    Content="测试页面"
+                    Tag="Test">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE789;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
                 <NavigationViewItem

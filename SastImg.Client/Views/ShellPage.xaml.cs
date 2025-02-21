@@ -27,6 +27,9 @@ public sealed partial class ShellPage : Page
                 case "Settings":
                     MainFrame.Navigate(typeof(SettingsView));
                     break;
+                case "Test":
+                    MainFrame.Navigate(typeof(TestView));
+                    break;
                 case "GitHub":
                     await Launcher.LaunchUriAsync(new Uri("https://github.com/NJUPT-SAST-Csharp/Winter-Of-Code-2024"));
                     break;
@@ -35,3 +38,4 @@ public sealed partial class ShellPage : Page
     }
 
 }
+
