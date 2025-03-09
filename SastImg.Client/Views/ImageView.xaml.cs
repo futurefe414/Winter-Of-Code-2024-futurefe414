@@ -23,11 +23,25 @@ namespace SastImg.Client.Views
     /// </summary>
     public sealed partial class ImageView : Page
     {
+        public ImageViewModel ViewModel { get; }
         public ImageView()
         {
             this.InitializeComponent();
 
+            ViewModel = new ImageViewModel();
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter is ImageModel model)
+            {
+                var isSuccess = await ViewModel.ShowImageAsync(model.Id);
+            }
         }
     }
 
+    internal class ImageModel
+    {
+        public int Id { get; set; }
+    }
 }
