@@ -91,20 +91,3 @@ Fork 该仓库，新仓库的拥有者可以是你自己的账号，也可以放
 
 [Getting Started](https://github.com/NJUPT-SAST-Csharp/Winter-Of-Code-2024/blob/main/Getting%20Started.md)
 
-## 你需要完成什么？
-
-### 主要功能
-
-- 图片浏览
-  - 可以列出相册，并且能展示相册内的所有图片
-- 上传图片
-- 创建相册
-- 修改相册和图片的描述，标签，分类
-
-### 一些细小的功能
-
-- 注册账号
-- 应用左上角的返回按钮现在不起作用，请编写代码实现返回功能
-  - Tips: ShellPage 中的 TitleBar 有 BackButtonClick 事件。Frame 有自带的返回方法
-- 右上角用户头像处还不能显示用户的头像，可以通过对 ExpandableUserAvatar 进行扩展实现。
-- 查看和修改用户资料
