@@ -30,12 +30,20 @@
             Style="{StaticResource MainNavigationViewStyle}">
             <NavigationView.MenuItems>
                 <NavigationViewItem
-                    Content="主页"
+                    Content="Home"
                     Icon="Home"
                     Tag="Home" />
 
                 <NavigationViewItem
-                    Content="测试页面"
+                    Content="Categories"
+                    Tag="Categories">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8FD;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem
+                    Content="Test"
                     Tag="Test">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE789;"/>
@@ -64,6 +72,7 @@
                 Title="SAST Image"
                 ui:UIElementExtensions.ClipToBounds="False"
                 AutoConfigureCustomTitleBar="True"
+                BackButtonClick="TitleBar_BackButtonClick"
                 CompactStateBreakpoint="720"
                 DisplayMode="Tall"
                 IsBackButtonVisible="{x:Bind MainFrame.CanGoBack, Mode=OneWay}"
@@ -88,7 +97,7 @@
                                     <cc:IconButton.Icon>
                                         <FontIcon Glyph="&#xE8A6;" />
                                     </cc:IconButton.Icon>
-                                    查看资料
+                                    View Profile
                                 </cc:IconButton>
                                 <cc:IconButton
                                     HorizontalAlignment="Stretch"
@@ -98,7 +107,17 @@
                                     <cc:IconButton.Icon>
                                         <FontIcon Glyph="&#xE8A6;" />
                                     </cc:IconButton.Icon>
-                                    登录
+                                    Login
+                                </cc:IconButton>
+                                <cc:IconButton
+                                    HorizontalAlignment="Stretch"
+                                    Command="{x:Bind vm.RegisterCommand}"
+                                    Style="{StaticResource TransparentIconButtonStyle}"
+                                    Visibility="{x:Bind helper:BindHelper.BoolToVisibility(vm.IsLoggedIn, x:True), Mode=OneWay}">
+                                    <cc:IconButton.Icon>
+                                        <FontIcon Glyph="&#xE8D4;" />
+                                    </cc:IconButton.Icon>
+                                    Register
                                 </cc:IconButton>
                                 <cc:IconButton
                                     HorizontalAlignment="Stretch"
@@ -109,7 +128,7 @@
                                     <cc:IconButton.Icon>
                                         <FontIcon Glyph="&#xE8A6;" />
                                     </cc:IconButton.Icon>
-                                    退出登录
+                                    Logout
                                 </cc:IconButton>
 
                             </StackPanel>

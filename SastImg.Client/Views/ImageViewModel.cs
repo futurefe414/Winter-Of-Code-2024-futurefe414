@@ -1,62 +1,51 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media.Imaging;
-using SastImg.Client.Service.API;
-using SastImg.Client.Views;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using SastImg.Client.Service.API;
 
-namespace SastImg.Client.Views
+namespace SastImg.Client.Views;
+
+public partial class ImageViewModel : ObservableObject
 {
-    public partial class ImageViewModel : ObservableObject
+    [ObservableProperty]
+    private ObservableCollection<ImageDto> images = new();
+
+    [ObservableProperty]
+    private bool isLoading;
+
+    [ObservableProperty]
+    private string albumTitle = "Images";
+
+    public long AlbumId { get; private set; }
+
+    public async Task LoadImagesAsync(long albumId)
     {
-        [ObservableProperty]
-        private byte[]? imageData;
-        private Image img; // Add this line to declare the img field
+        AlbumId = albumId;
+        IsLoading = true;
 
-        public async Task<bool> ShowImageAsync(long id)
+        try
         {
-            var imageResponse = await App.API?.Image.GetImageAsync(id, 0);
-            if (!imageResponse.IsSuccessful) return false;
-
-            using var m = new MemoryStream();
-            await imageResponse.Content.CopyToAsync(m);
-            ImageData = m.ToArray();
-            return true;
-        }
-
-        public ImageViewModel()
-        {
-            PropertyChanged += async (sender, e) =>
+            // Load album details
+            var albumResponse = await App.API.Album.GetDetailedAlbumAsync(albumId);
+            if (albumResponse.IsSuccessStatusCode && albumResponse.Content != null)
             {
-                if (e.PropertyName == nameof(ImageData)) // 如果属性的名字是“ImageData”
-                {
-                    await UpdateImageAsync();
-                }
-            };
-        }
-
-        private async Task UpdateImageAsync()
-        {
-            if (imageData is null)
-            {
-                img.Source = null;
-                return;
+                AlbumTitle = albumResponse.Content.Title ?? "Images";
             }
-            var s = new MemoryStream(imageData);
-            var bitmap = new BitmapImage();
-            await bitmap.SetSourceAsync(s.AsRandomAccessStream());
-            img.Source = bitmap;
-        }
-    }
 
-    internal class Image
-    {
-        public object Source { get; internal set; }
+            // Load images
+            var response = await App.API.Image.GetImagesAsync(null, albumId, null);
+            if (response.IsSuccessStatusCode && response.Content != null)
+            {
+                Images.Clear();
+                foreach (var image in response.Content)
+                {
+                    Images.Add(image);
+                }
+            }
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 }

@@ -4,28 +4,23 @@ using SastImg.Client.Service.API;
 
 namespace SastImg.Client.Views;
 
-public sealed partial class HomeView : Page
+public sealed partial class CategoryView : Page
 {
-    public HomeViewModel ViewModel { get; }
+    public CategoryViewModel ViewModel { get; }
 
-    public HomeView()
+    public CategoryView()
     {
-        ViewModel = new HomeViewModel();
+        ViewModel = new CategoryViewModel();
         this.InitializeComponent();
     }
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        await ViewModel.LoadFeaturedCategoriesAsync();
+        await ViewModel.LoadCategoriesAsync();
     }
 
-    private void ViewAllCategories_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        App.Shell?.MainFrame.Navigate(typeof(CategoryView));
-    }
-
-    private void CategoryItem_Click(object sender, ItemClickEventArgs e)
+    private void CategoryGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is CategoryDto category)
         {

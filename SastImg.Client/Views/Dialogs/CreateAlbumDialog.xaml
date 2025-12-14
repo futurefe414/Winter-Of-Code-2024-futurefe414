@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="SastImg.Client.Views.Dialogs.CreateAlbumDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Create New Album"
+    PrimaryButtonText="Create"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonClick="CreateButton_Click"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="16">
+        <!-- Album Title -->
+        <StackPanel Spacing="8">
+            <TextBlock Text="Title *" Style="{ThemeResource BodyStrongTextBlockStyle}" />
+            <TextBox
+                x:Name="TitleTextBox"
+                PlaceholderText="Enter album title"
+                MaxLength="200" />
+        </StackPanel>
+
+        <!-- Album Description -->
+        <StackPanel Spacing="8">
+            <TextBlock Text="Description" Style="{ThemeResource BodyStrongTextBlockStyle}" />
+            <TextBox
+                x:Name="DescriptionTextBox"
+                PlaceholderText="Enter album description"
+                TextWrapping="Wrap"
+                AcceptsReturn="True"
+                Height="100"
+                MaxLength="1000" />
+        </StackPanel>
+
+        <!-- Access Level -->
+        <StackPanel Spacing="8">
+            <TextBlock Text="Access Level" Style="{ThemeResource BodyStrongTextBlockStyle}" />
+            <ComboBox x:Name="AccessLevelComboBox" SelectedIndex="0" HorizontalAlignment="Stretch">
+                <ComboBoxItem Content="Private - Only me and collaborators" />
+                <ComboBoxItem Content="Auth Read Only - Authenticated users can view" />
+                <ComboBoxItem Content="Auth Read Write - Authenticated users can add images" />
+                <ComboBoxItem Content="Public Read Only - Everyone can view" />
+                <ComboBoxItem Content="Public Read Write - Everyone can add images" />
+            </ComboBox>
+        </StackPanel>
+
+        <!-- Error Message -->
+        <InfoBar
+            x:Name="ErrorInfoBar"
+            Severity="Error"
+            IsOpen="False"
+            IsClosable="True" />
+    </StackPanel>
+</ContentDialog>

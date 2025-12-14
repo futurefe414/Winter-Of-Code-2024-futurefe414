@@ -1,47 +1,55 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using SastImg.Client.Service.API;
+using SastImg.Client.Views.Dialogs;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace SastImg.Client.Views;
 
-namespace SastImg.Client.Views
+public sealed partial class ImageView : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class ImageView : Page
+    public ImageViewModel ViewModel { get; }
+
+    public ImageView()
     {
-        public ImageViewModel ViewModel { get; }
-        public ImageView()
-        {
-            this.InitializeComponent();
+        this.InitializeComponent();
+        ViewModel = new ImageViewModel();
+    }
 
-            ViewModel = new ImageViewModel();
-        }
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        if (e.Parameter is long albumId)
         {
-            if (e.Parameter is ImageModel model)
-            {
-                var isSuccess = await ViewModel.ShowImageAsync(model.Id);
-            }
+            await ViewModel.LoadImagesAsync(albumId);
         }
     }
 
-    internal class ImageModel
+    private async void UploadImages_Click(object sender, RoutedEventArgs e)
     {
-        public int Id { get; set; }
+        var dialog = new UploadImageDialog(ViewModel.AlbumId)
+        {
+            XamlRoot = this.XamlRoot
+        };
+
+        var result = await dialog.ShowAsync();
+        if (dialog.UploadSuccessful)
+        {
+            await ViewModel.LoadImagesAsync(ViewModel.AlbumId);
+        }
+    }
+
+    private void ImageGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is ImageDto image)
+        {
+            // TODO: Navigate to detailed image view
+        }
+    }
+
+    public static string GetThumbnailUrl(long imageId)
+    {
+        return $"http://sastwoc2024.shirasagi.space:5265/api/images/{imageId}?kind=1";
     }
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="SastImg.Client.Views.Dialogs.RegisterDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SastImg.Client.Views.Dialogs"
+    xmlns:app="using:SastImg.Client"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helper="using:SastImg.Client.Helpers"
+    mc:Ignorable="d"
+    Style="{ThemeResource DefaultContentDialogStyle}"
+    Title="Register"
+    CloseButtonText="Cancel"
+    PrimaryButtonText="Register"
+    IsPrimaryButtonEnabled="{x:Bind helper:BindHelper.Not(IsRegistering), Mode=OneWay}">
+
+    <StackPanel Spacing="12">
+        <TextBox
+            IsEnabled="{x:Bind helper:BindHelper.Not(IsRegistering), Mode=OneWay}"
+            Text="{x:Bind Username, Mode=TwoWay}"
+            PlaceholderText="Username (2-160 characters)" />
+        <PasswordBox
+            IsEnabled="{x:Bind helper:BindHelper.Not(IsRegistering), Mode=OneWay}"
+            Password="{x:Bind Password, Mode=TwoWay}"
+            PlaceholderText="Password (6-200 characters)" />
+        <PasswordBox
+            IsEnabled="{x:Bind helper:BindHelper.Not(IsRegistering), Mode=OneWay}"
+            Password="{x:Bind ConfirmPassword, Mode=TwoWay}"
+            PlaceholderText="Confirm Password" />
+        <TextBox
+            IsEnabled="{x:Bind helper:BindHelper.Not(IsRegistering), Mode=OneWay}"
+            Text="{x:Bind RegistrationCode, Mode=TwoWay}"
+            PlaceholderText="Registration Code (6 digits)" />
+        <TextBlock
+            Style="{ThemeResource CaptionTextBlockStyle}" 
+            Foreground="{ThemeResource SystemFillColorCriticalBrush}" 
+            Text="{x:Bind ErrorMessage, Mode=OneWay}" 
+            Visibility="{x:Bind IsError, Mode=OneWay}" />
+    </StackPanel>
+</ContentDialog>

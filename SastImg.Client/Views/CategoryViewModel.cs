@@ -1,28 +1,24 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SastImg.Client.Service.API;
 
 namespace SastImg.Client.Views;
 
-public partial class HomeViewModel : ObservableObject
+public partial class CategoryViewModel : ObservableObject
 {
     [ObservableProperty]
     private bool _isLoading = false;
 
-    public ObservableCollection<CategoryDto> FeaturedCategories { get; } = new();
+    public ObservableCollection<CategoryDto> Categories { get; } = new();
 
-    public HomeViewModel()
-    {
-    }
-
-    public async Task LoadFeaturedCategoriesAsync()
+    public async Task LoadCategoriesAsync()
     {
         if (IsLoading)
             return;
 
         IsLoading = true;
-        FeaturedCategories.Clear();
+        Categories.Clear();
 
         try
         {
@@ -30,19 +26,15 @@ public partial class HomeViewModel : ObservableObject
             
             if (response.IsSuccessful && response.Content != null)
             {
-                // Show first 6 categories as featured
-                int count = 0;
                 foreach (var category in response.Content)
                 {
-                    if (count >= 6) break;
-                    FeaturedCategories.Add(category);
-                    count++;
+                    Categories.Add(category);
                 }
             }
         }
         catch
         {
-            // Handle error
+            // Handle error - could show a dialog or error message
         }
         finally
         {

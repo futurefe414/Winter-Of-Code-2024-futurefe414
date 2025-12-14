@@ -30,6 +30,12 @@ public partial class ShellPageViewModel : ObservableObject
         await dialog.ShowAsync();
     });
 
+    public ICommand RegisterCommand => new RelayCommand(async ( ) =>
+    {
+        var dialog = new RegisterDialog();
+        await dialog.ShowAsync();
+    });
+
     public ICommand LogoutCommand => new RelayCommand(( ) =>
     {
         App.AuthService.Logout();
