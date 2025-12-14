@@ -1,8 +1,9 @@
-using System;
-using System.Diagnostics;
 using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
+
+// To learn more about WinUI, the WinUI project structure,
+// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SastImg.Client.Views.Dialogs;
 
@@ -21,9 +22,6 @@ public sealed partial class LoginDialog : ContentDialog
     [ObservableProperty]
     private bool _isLoginFailed = false;
 
-    [ObservableProperty]
-    private string _errorMessage = "";
-
     private CancellationTokenSource? _loginCts;
 
     public LoginDialog ( )
@@ -41,68 +39,59 @@ public sealed partial class LoginDialog : ContentDialog
 
     private async void LoginDialog_PrimaryButtonClick (ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        var deferral = args.GetDeferral();
+        var deferral =  args.GetDeferral();
         _loginCts = new();
+
+        // 验证输入
+        if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+        {
+            IsLoginFailed = true;
+            args.Cancel = true;
+            deferral.Complete();
+            return;
+        }
 
         IsLoggingIn = true;
         IsLoginFailed = false;
-        ErrorMessage = "";
-        
-        Debug.WriteLine($"[LoginDialog] 开始登录，用户名: {Username}");
         
         try
         {
-            // 验证输入
-            if (string.IsNullOrWhiteSpace(Username))
-            {
-                ErrorMessage = "请输入用户名";
-                IsLoginFailed = true;
-                args.Cancel = true;
-                IsLoggingIn = false;
-                deferral.Complete();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(Password))
-            {
-                ErrorMessage = "请输入密码";
-                IsLoginFailed = true;
-                args.Cancel = true;
-                IsLoggingIn = false;
-                deferral.Complete();
-                return;
-            }
-
-            bool loginSuccess = await App.AuthService.LoginAsync(Username, Password);
+            System.Diagnostics.Debug.WriteLine($"尝试登录: 用户名={Username}");
+            
+            bool loginSuccess = await App.AuthService.LoginAsync(Username, Password, _loginCts.Token);
+            
+            System.Diagnostics.Debug.WriteLine($"登录结果: {(loginSuccess ? "成功" : "失败")}");
             
             if (loginSuccess)
             {
-                Debug.WriteLine("[LoginDialog] 登录成功");
                 // 登录成功，允许对话框关闭
-                IsLoggingIn = false;
+                args.Cancel = false;
             }
             else
             {
-                Debug.WriteLine("[LoginDialog] 登录失败");
-                // 登录失败，取消对话框关闭，显示错误信息
-                ErrorMessage = "登录失败，请检查用户名和密码";
+                // 登录失败，阻止对话框关闭并显示错误
                 args.Cancel = true;
-                IsLoggingIn = false;
                 IsLoginFailed = true;
             }
         }
+        catch (System.OperationCanceledException)
+        {
+            // 用户取消操作，允许对话框关闭
+            System.Diagnostics.Debug.WriteLine("登录操作已取消");
+            args.Cancel = false;
+        }
         catch (System.Exception ex)
         {
-            Debug.WriteLine($"[LoginDialog] 登录异常: {ex.Message}");
-            // 发生异常，取消对话框关闭，显示错误信息
-            ErrorMessage = $"登录错误: {ex.Message}";
+            // 发生异常，阻止对话框关闭并显示错误
+            System.Diagnostics.Debug.WriteLine($"登录异常: {ex.Message}");
             args.Cancel = true;
-            IsLoggingIn = false;
             IsLoginFailed = true;
         }
         finally
         {
+            IsLoggingIn = false;
             deferral.Complete();
         }
     }
+
 }

@@ -40,11 +40,29 @@ public sealed partial class ImageView : Page
         }
     }
 
+    private async void EditAlbum_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new Dialogs.EditAlbumDialog(
+            ViewModel.AlbumId,
+            ViewModel.AlbumTitle,
+            ViewModel.AlbumDescription,
+            ViewModel.AlbumAccessLevel)
+        {
+            XamlRoot = this.XamlRoot
+        };
+
+        var result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary)
+        {
+            await ViewModel.LoadImagesAsync(ViewModel.AlbumId);
+        }
+    }
+
     private void ImageGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is ImageDto image)
         {
-            // TODO: Navigate to detailed image view
+            Frame.Navigate(typeof(ImageDetailView), (image.Id, ViewModel.AlbumId));
         }
     }
 

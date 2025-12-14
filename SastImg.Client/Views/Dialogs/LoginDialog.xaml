@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ContentDialog
     x:Class="SastImg.Client.Views.Dialogs.LoginDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -17,23 +17,19 @@
 
     <StackPanel Spacing="12">
         <TextBox
+            x:Name="UsernameTextBox"
             IsEnabled="{x:Bind helper:BindHelper.Not(IsLoggingIn), Mode=OneWay}"
-            Text="{x:Bind Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            PlaceholderText="用户名"
-            Header="用户名" />
+            Text="{x:Bind Username, Mode=TwoWay}"
+            PlaceholderText="用户名" />
         <PasswordBox
+            x:Name="PasswordBox"
             IsEnabled="{x:Bind helper:BindHelper.Not(IsLoggingIn), Mode=OneWay}"
-            Password="{x:Bind Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            PlaceholderText="密码"
-            Header="密码" />
-        <ProgressRing
-            IsActive="{x:Bind IsLoggingIn, Mode=OneWay}"
-            Visibility="{x:Bind IsLoggingIn, Mode=OneWay}" />
+            Password="{x:Bind Password, Mode=TwoWay}"
+            PlaceholderText="密码" />
         <TextBlock
             Style="{ThemeResource CaptionTextBlockStyle}" 
             Foreground="{ThemeResource SystemFillColorCriticalBrush}" 
-            Text="{x:Bind ErrorMessage, Mode=OneWay}" 
-            Visibility="{x:Bind IsLoginFailed, Mode=OneWay}"
-            TextWrapping="Wrap" />
+            Text="登录失败，请检查用户名和密码" 
+            Visibility="{x:Bind IsLoginFailed, Mode=OneWay}" />
     </StackPanel>
 </ContentDialog>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Text.Json;
@@ -26,14 +25,10 @@ public class SastImgAPI
 
     public SastImgAPI (string endpointUrl)
     {
-        Debug.WriteLine($"[SastImgAPI] 初始化API客户端，端点: {endpointUrl}");
-
         var jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             NumberHandling = JsonNumberHandling.WriteAsString,
-            // 添加UTF-8编码支持
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
         jsonSerializerOptions.Converters.Add(new Int32Converter());
         jsonSerializerOptions.Converters.Add(new Int64Converter());
@@ -44,18 +39,11 @@ public class SastImgAPI
             ContentSerializer = new SystemTextJsonContentSerializer(jsonSerializerOptions),
         };
 
-        // 使用正确的端口5265
-        var apiBaseUrl = "http://sastwoc2024.shirasagi.space:5265/";
-        
-        Debug.WriteLine($"[SastImgAPI] 创建API接口，基础URL: {apiBaseUrl}");
-        
-        Account = RestService.For<IAccountApi>(apiBaseUrl, refitSettings);
-        Image = RestService.For<IImageApi>(apiBaseUrl, refitSettings);
-        Album = RestService.For<IAlbumApi>(apiBaseUrl, refitSettings);
-        Category = RestService.For<ICategoryApi>(apiBaseUrl, refitSettings);
-        Tag = RestService.For<ITagApi>(apiBaseUrl, refitSettings);
-        User = RestService.For<IUserApi>(apiBaseUrl, refitSettings);
-        
-        Debug.WriteLine("[SastImgAPI] API客户端初始化完成");
+        Account = RestService.For<IAccountApi>(endpointUrl, refitSettings);
+        Image = RestService.For<IImageApi>(endpointUrl, refitSettings);
+        Album = RestService.For<IAlbumApi>(endpointUrl, refitSettings);
+        Category = RestService.For<ICategoryApi>(endpointUrl, refitSettings);
+        Tag = RestService.For<ITagApi>(endpointUrl, refitSettings);
+        User = RestService.For<IUserApi>(endpointUrl, refitSettings);
     }
 }

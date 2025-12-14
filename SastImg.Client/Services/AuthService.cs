@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SastImg.Client.Services;
@@ -20,7 +20,7 @@ public class AuthService ( )
     /// <summary>
     /// 登录，如果登录成功则返回 true，登录状态会保存在该Service中
     /// </summary>
-    public async Task<bool> LoginAsync (string username, string password)
+    public async Task<bool> LoginAsync (string username, string password, CancellationToken cancellationToken = default)
     {
         _token = null;
         _username = null;
@@ -28,25 +28,26 @@ public class AuthService ( )
 
         try
         {
-            Debug.WriteLine($"[AuthService] 尝试登录用户: {username}");
+            System.Diagnostics.Debug.WriteLine($"AuthService: 开始登录请求 - 用户名: {username}");
             
-            var result = await App.API!.Account.LoginAsync(new() { Username = username, Password = password });
+            var result = await App.API!.Account.LoginAsync(new() { Username = username, Password = password }, cancellationToken);
 
-            Debug.WriteLine($"[AuthService] API响应状态码: {result.StatusCode}");
-            
+            System.Diagnostics.Debug.WriteLine($"AuthService: API 响应状态码: {result.StatusCode}");
+            System.Diagnostics.Debug.WriteLine($"AuthService: IsSuccessStatusCode: {result.IsSuccessStatusCode}");
+
             if ( result.IsSuccessStatusCode == false )
             {
-                Debug.WriteLine($"[AuthService] 登录失败: HTTP {result.StatusCode}");
+                System.Diagnostics.Debug.WriteLine($"AuthService: 登录失败 - HTTP 状态码: {result.StatusCode}");
                 if (result.Error != null)
                 {
-                    Debug.WriteLine($"[AuthService] 错误详情: {result.Error.Content}");
+                    System.Diagnostics.Debug.WriteLine($"AuthService: 错误内容: {result.Error.Content}");
                 }
                 return false;
             }
             
             if ( result.Content?.Token == null )
             {
-                Debug.WriteLine("[AuthService] 登录失败: 未返回Token");
+                System.Diagnostics.Debug.WriteLine("AuthService: 登录失败 - Token 为空");
                 return false;
             }
 
@@ -54,14 +55,24 @@ public class AuthService ( )
             _username = username;
             _isLoggedIn = true;
             
-            Debug.WriteLine($"[AuthService] 登录成功，Token: {_token?.Substring(0, Math.Min(20, _token.Length))}...");
+            System.Diagnostics.Debug.WriteLine($"AuthService: 登录成功 - Token: {_token?.Substring(0, Math.Min(20, _token.Length))}...");
             
             LoginStateChanged?.Invoke(true, username); // 触发登陆成功事件
         }
+        catch (TaskCanceledException)
+        {
+            System.Diagnostics.Debug.WriteLine("AuthService: 登录请求已取消");
+            throw; // 重新抛出以便调用者处理
+        }
+        catch (OperationCanceledException)
+        {
+            System.Diagnostics.Debug.WriteLine("AuthService: 登录操作已取消");
+            throw; // 重新抛出以便调用者处理
+        }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[AuthService] 登录异常: {ex.Message}");
-            Debug.WriteLine($"[AuthService] 异常堆栈: {ex.StackTrace}");
+            System.Diagnostics.Debug.WriteLine($"AuthService: 登录异常 - {ex.GetType().Name}: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"AuthService: 堆栈跟踪: {ex.StackTrace}");
             return false;
         }
 
@@ -74,7 +85,7 @@ public class AuthService ( )
     public void Logout ( )
     {
         _token = null;
-        _username = null;
+        _isLoggedIn = false;
         _isLoggedIn = false;
         LoginStateChanged?.Invoke(false, null); // 触发登出事件
     }

@@ -38,13 +38,24 @@ public sealed partial class CreateAlbumDialog : ContentDialog
                 return;
             }
 
+            // Validate description
+            var description = string.IsNullOrWhiteSpace(DescriptionTextBox.Text) 
+                ? "No description" 
+                : DescriptionTextBox.Text.Trim();
+
+            if (description.Length < 3)
+            {
+                ErrorInfoBar.Message = "Description must be at least 3 characters.";
+                ErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                return;
+            }
+
             // Create album request
             var request = new CreateAlbumRequest
             {
                 Title = TitleTextBox.Text.Trim(),
-                Description = string.IsNullOrWhiteSpace(DescriptionTextBox.Text) 
-                    ? null 
-                    : DescriptionTextBox.Text.Trim(),
+                Description = description,
                 AccessLevel = AccessLevelComboBox.SelectedIndex,
                 CategoryId = _categoryId
             };

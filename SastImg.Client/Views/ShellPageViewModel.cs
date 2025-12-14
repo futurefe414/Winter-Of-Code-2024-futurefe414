@@ -7,7 +7,7 @@ using SastImg.Client.Views.Dialogs;
 namespace SastImg.Client.Views;
 public partial class ShellPageViewModel : ObservableObject
 {
-    const string DefaultUsername = "未登录";
+    const string DefaultUsername =  "Not logged in";
 
     public ShellPageViewModel ( )
     {
@@ -39,5 +39,20 @@ public partial class ShellPageViewModel : ObservableObject
     public ICommand LogoutCommand => new RelayCommand(( ) =>
     {
         App.AuthService.Logout();
+    });
+
+    public ICommand ViewProfileCommand => new RelayCommand(async ( ) =>
+    {
+        // Get current user ID - we need to track this in AuthService
+        // For now, we'll need to add a way to get the user ID
+        // This is a limitation - the API doesn't return user ID on login
+        // We would need to call a "GetCurrentUser" endpoint or similar
+        
+        // Navigate to user profile view
+        if (App.Shell?.MainFrame != null)
+        {
+            // For now, we'll pass 0 and let the view handle getting current user info
+            App.Shell.MainFrame.Navigate(typeof(UserProfileView), 0L);
+        }
     });
 }

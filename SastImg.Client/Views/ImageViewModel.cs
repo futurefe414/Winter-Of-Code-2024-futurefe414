@@ -16,6 +16,12 @@ public partial class ImageViewModel : ObservableObject
     [ObservableProperty]
     private string albumTitle = "Images";
 
+    [ObservableProperty]
+    private string albumDescription = "";
+
+    [ObservableProperty]
+    private int albumAccessLevel = 0;
+
     public long AlbumId { get; private set; }
 
     public async Task LoadImagesAsync(long albumId)
@@ -30,6 +36,8 @@ public partial class ImageViewModel : ObservableObject
             if (albumResponse.IsSuccessStatusCode && albumResponse.Content != null)
             {
                 AlbumTitle = albumResponse.Content.Title ?? "Images";
+                AlbumDescription = albumResponse.Content.Description ?? "";
+                AlbumAccessLevel = albumResponse.Content.AccessLevel;
             }
 
             // Load images
