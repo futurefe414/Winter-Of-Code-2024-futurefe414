@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Text.Json;
@@ -25,11 +26,14 @@ public class SastImgAPI
 
     public SastImgAPI (string endpointUrl)
     {
+        Debug.WriteLine($"[SastImgAPI] 初始化API客户端，端点: {endpointUrl}");
 
         var jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-             NumberHandling = JsonNumberHandling.WriteAsString,
+            NumberHandling = JsonNumberHandling.WriteAsString,
+            // 添加UTF-8编码支持
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
         jsonSerializerOptions.Converters.Add(new Int32Converter());
         jsonSerializerOptions.Converters.Add(new Int64Converter());
@@ -40,11 +44,18 @@ public class SastImgAPI
             ContentSerializer = new SystemTextJsonContentSerializer(jsonSerializerOptions),
         };
 
-        Account = RestService.For<IAccountApi>("http://sastwoc2024.shirasagi.space:5265/", refitSettings);
-        Image = RestService.For<IImageApi>("http://sastwoc2024.shirasagi.space:5265/", refitSettings);
-        Album = RestService.For<IAlbumApi>("http://sastwoc2024.shirasagi.space:5265/", refitSettings);
-        Category = RestService.For<ICategoryApi>("http://sastwoc2024.shirasagi.space:5265/", refitSettings);
-        Tag = RestService.For<ITagApi>("http://sastwoc2024.shirasagi.space:5265/", refitSettings);
-        User = RestService.For<IUserApi>("http://sastwoc2024.shirasagi.space:5265/", refitSettings);
+        // 使用正确的端口5265
+        var apiBaseUrl = "http://sastwoc2024.shirasagi.space:5265/";
+        
+        Debug.WriteLine($"[SastImgAPI] 创建API接口，基础URL: {apiBaseUrl}");
+        
+        Account = RestService.For<IAccountApi>(apiBaseUrl, refitSettings);
+        Image = RestService.For<IImageApi>(apiBaseUrl, refitSettings);
+        Album = RestService.For<IAlbumApi>(apiBaseUrl, refitSettings);
+        Category = RestService.For<ICategoryApi>(apiBaseUrl, refitSettings);
+        Tag = RestService.For<ITagApi>(apiBaseUrl, refitSettings);
+        User = RestService.For<IUserApi>(apiBaseUrl, refitSettings);
+        
+        Debug.WriteLine("[SastImgAPI] API客户端初始化完成");
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace SastImg.Client.Services;
@@ -27,20 +28,40 @@ public class AuthService ( )
 
         try
         {
+            Debug.WriteLine($"[AuthService] 尝试登录用户: {username}");
+            
             var result = await App.API!.Account.LoginAsync(new() { Username = username, Password = password });
 
+            Debug.WriteLine($"[AuthService] API响应状态码: {result.StatusCode}");
+            
             if ( result.IsSuccessStatusCode == false )
+            {
+                Debug.WriteLine($"[AuthService] 登录失败: HTTP {result.StatusCode}");
+                if (result.Error != null)
+                {
+                    Debug.WriteLine($"[AuthService] 错误详情: {result.Error.Content}");
+                }
                 return false;
+            }
+            
             if ( result.Content?.Token == null )
+            {
+                Debug.WriteLine("[AuthService] 登录失败: 未返回Token");
                 return false;
+            }
 
             _token = result.Content?.Token;
             _username = username;
             _isLoggedIn = true;
+            
+            Debug.WriteLine($"[AuthService] 登录成功，Token: {_token?.Substring(0, Math.Min(20, _token.Length))}...");
+            
             LoginStateChanged?.Invoke(true, username); // 触发登陆成功事件
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine($"[AuthService] 登录异常: {ex.Message}");
+            Debug.WriteLine($"[AuthService] 异常堆栈: {ex.StackTrace}");
             return false;
         }
 
@@ -53,7 +74,7 @@ public class AuthService ( )
     public void Logout ( )
     {
         _token = null;
-        _isLoggedIn = false;
+        _username = null;
         _isLoggedIn = false;
         LoginStateChanged?.Invoke(false, null); // 触发登出事件
     }

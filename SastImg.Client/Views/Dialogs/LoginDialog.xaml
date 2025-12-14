@@ -18,13 +18,22 @@
     <StackPanel Spacing="12">
         <TextBox
             IsEnabled="{x:Bind helper:BindHelper.Not(IsLoggingIn), Mode=OneWay}"
-            Text="{x:Bind Username, Mode=TwoWay}"
-            PlaceholderText="用户名" />
-        <TextBox
+            Text="{x:Bind Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            PlaceholderText="用户名"
+            Header="用户名" />
+        <PasswordBox
             IsEnabled="{x:Bind helper:BindHelper.Not(IsLoggingIn), Mode=OneWay}"
-            Text="{x:Bind Password, Mode=TwoWay}"
-            PlaceholderText="密码" />
+            Password="{x:Bind Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            PlaceholderText="密码"
+            Header="密码" />
+        <ProgressRing
+            IsActive="{x:Bind IsLoggingIn, Mode=OneWay}"
+            Visibility="{x:Bind IsLoggingIn, Mode=OneWay}" />
         <TextBlock
-            Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" Text="登录错误，请重试" Visibility="{x:Bind IsLoginFailed, Mode=OneWay}" />
+            Style="{ThemeResource CaptionTextBlockStyle}" 
+            Foreground="{ThemeResource SystemFillColorCriticalBrush}" 
+            Text="{x:Bind ErrorMessage, Mode=OneWay}" 
+            Visibility="{x:Bind IsLoginFailed, Mode=OneWay}"
+            TextWrapping="Wrap" />
     </StackPanel>
 </ContentDialog>

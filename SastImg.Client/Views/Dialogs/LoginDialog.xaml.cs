@@ -1,9 +1,8 @@
+using System;
+using System.Diagnostics;
 using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SastImg.Client.Views.Dialogs;
 
@@ -17,10 +16,13 @@ public sealed partial class LoginDialog : ContentDialog
     private string _password="";
 
     [ObservableProperty]
-    private bool _isLoggingIn=true;
+    private bool _isLoggingIn=false;
 
     [ObservableProperty]
     private bool _isLoginFailed = false;
+
+    [ObservableProperty]
+    private string _errorMessage = "";
 
     private CancellationTokenSource? _loginCts;
 
@@ -39,53 +41,68 @@ public sealed partial class LoginDialog : ContentDialog
 
     private async void LoginDialog_PrimaryButtonClick (ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        var deferral =  args.GetDeferral();
+        var deferral = args.GetDeferral();
         _loginCts = new();
 
         IsLoggingIn = true;
         IsLoginFailed = false;
+        ErrorMessage = "";
+        
+        Debug.WriteLine($"[LoginDialog] 开始登录，用户名: {Username}");
+        
         try
         {
-            if ( await App.AuthService.LoginAsync(Username, Password) )
+            // 验证输入
+            if (string.IsNullOrWhiteSpace(Username))
             {
-                // �Ի���رպ���ʾ��½�ɹ�����
-                this.Closed += (ContentDialog sender, ContentDialogClosedEventArgs args) =>
-                {
-                    if ( args.Result is not ContentDialogResult.Primary )
-                        return;
-                    var successDialog = new ContentDialog()
-                    {
-                        XamlRoot = this.XamlRoot,
-                        Title="��¼�ɹ�",
-                        CloseButtonText="ȷ��"
-                    };
-                    var _ = successDialog.ShowAsync();
-                };
+                ErrorMessage = "请输入用户名";
+                IsLoginFailed = true;
+                args.Cancel = true;
+                IsLoggingIn = false;
+                deferral.Complete();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                ErrorMessage = "请输入密码";
+                IsLoginFailed = true;
+                args.Cancel = true;
+                IsLoggingIn = false;
+                deferral.Complete();
+                return;
+            }
+
+            bool loginSuccess = await App.AuthService.LoginAsync(Username, Password);
+            
+            if (loginSuccess)
+            {
+                Debug.WriteLine("[LoginDialog] 登录成功");
+                // 登录成功，允许对话框关闭
+                IsLoggingIn = false;
             }
             else
             {
-                // �Ի���رպ���ʾ��½ʧ�ܵ���
-                this.Closed += (ContentDialog sender, ContentDialogClosedEventArgs args) =>
-                {
-                    if ( args.Result is not ContentDialogResult.Primary )
-                        return;
-                    var successDialog = new ContentDialog()
-                    {
-                        XamlRoot = this.XamlRoot,
-                        Title="��¼ʧ��",
-                        CloseButtonText="ȷ��"
-                    };
-                    var _ = successDialog.ShowAsync();
-                };
+                Debug.WriteLine("[LoginDialog] 登录失败");
+                // 登录失败，取消对话框关闭，显示错误信息
+                ErrorMessage = "登录失败，请检查用户名和密码";
+                args.Cancel = true;
+                IsLoggingIn = false;
+                IsLoginFailed = true;
             }
         }
-        catch ( System.Exception )
+        catch (System.Exception ex)
         {
+            Debug.WriteLine($"[LoginDialog] 登录异常: {ex.Message}");
+            // 发生异常，取消对话框关闭，显示错误信息
+            ErrorMessage = $"登录错误: {ex.Message}";
             args.Cancel = true;
             IsLoggingIn = false;
             IsLoginFailed = true;
         }
-        deferral.Complete();
+        finally
+        {
+            deferral.Complete();
+        }
     }
-
 }

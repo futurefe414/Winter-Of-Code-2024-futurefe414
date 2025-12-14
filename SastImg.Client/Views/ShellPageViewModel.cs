@@ -7,7 +7,7 @@ using SastImg.Client.Views.Dialogs;
 namespace SastImg.Client.Views;
 public partial class ShellPageViewModel : ObservableObject
 {
-    const string DefaultUsername =  "Not logged in";
+    const string DefaultUsername = "未登录";
 
     public ShellPageViewModel ( )
     {

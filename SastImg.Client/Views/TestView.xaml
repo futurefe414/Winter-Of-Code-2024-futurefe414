@@ -9,18 +9,52 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <StackPanel Orientation="Vertical">
-        <Button Command="{x:Bind ViewModel.LoadImagesCommand}"> 显示图片 </Button>
-        <ListView ItemsSource="{x:Bind ViewModel.Images}" SelectedItem="{x:Bind ViewModel.SelectedImage, Mode=TwoWay}">
-            <ListView.ItemTemplate>
-                <DataTemplate xmlns:api="using:SastImg.Client.Service.API" x:DataType="api:ImageDto">
-                    <StackPanel>
-                        <TextBlock Text="{x:Bind Title}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind UploadedAt}"/>
-                        <TextBlock Text="{x:Bind Id}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </StackPanel>
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical" Padding="24" Spacing="16">
+            <!-- 登录测试区域 -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="登录测试" Style="{ThemeResource TitleTextBlockStyle}" />
+                
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBox Header="用户名" Text="{x:Bind ViewModel.TestUsername, Mode=TwoWay}" Width="200" />
+                    <PasswordBox Header="密码" Password="{x:Bind ViewModel.TestPassword, Mode=TwoWay}" Width="200" />
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button Command="{x:Bind ViewModel.TestLoginCommand}" Content="登录" />
+                    <Button Command="{x:Bind ViewModel.TestUserLoginCommand}" Content="测试 test 账号" />
+                    <Button Command="{x:Bind ViewModel.TestAdminLoginCommand}" Content="测试 admin 账号" />
+                </StackPanel>
+                
+                <TextBlock 
+                    Text="{x:Bind ViewModel.LoginResult, Mode=OneWay}" 
+                    TextWrapping="Wrap"
+                    Style="{ThemeResource BodyTextBlockStyle}" />
+            </StackPanel>
+
+            <Border BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" 
+                    BorderThickness="0,1,0,0" 
+                    Margin="0,12" />
+
+            <!-- 图片列表测试区域 -->
+            <StackPanel Spacing="12">
+                <TextBlock Text="图片列表测试" Style="{ThemeResource TitleTextBlockStyle}" />
+                <Button Command="{x:Bind ViewModel.LoadImagesCommand}" Content="加载图片列表" />
+                
+                <ListView ItemsSource="{x:Bind ViewModel.Images}" 
+                          SelectedItem="{x:Bind ViewModel.SelectedImage, Mode=TwoWay}"
+                          MaxHeight="400">
+                    <ListView.ItemTemplate>
+                        <DataTemplate xmlns:api="using:SastImg.Client.Service.API" x:DataType="api:ImageDto">
+                            <StackPanel Padding="8">
+                                <TextBlock Text="{x:Bind Title}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                                <TextBlock Text="{x:Bind UploadedAt}"/>
+                                <TextBlock Text="{x:Bind Id}" Opacity="0.6"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </Page>
