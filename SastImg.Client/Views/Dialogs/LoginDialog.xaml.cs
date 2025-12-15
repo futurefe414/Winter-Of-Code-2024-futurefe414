@@ -1,4 +1,3 @@
-using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 
@@ -11,20 +10,20 @@ namespace SastImg.Client.Views.Dialogs;
 public sealed partial class LoginDialog : ContentDialog
 {
     [ObservableProperty]
-    private string _username="";
+    private string _username = "";
 
     [ObservableProperty]
-    private string _password="";
+    private string _password = "";
 
     [ObservableProperty]
-    private bool _isLoggingIn=false;
+    private bool _isLoggingIn = false;
 
     [ObservableProperty]
     private bool _isLoginFailed = false;
 
     private CancellationTokenSource? _loginCts;
 
-    public LoginDialog ( )
+    public LoginDialog()
     {
         XamlRoot = App.MainWindow?.Content.XamlRoot;
         this.InitializeComponent();
@@ -32,14 +31,14 @@ public sealed partial class LoginDialog : ContentDialog
         this.CloseButtonClick += LoginDialog_CloseButtonClick;
     }
 
-    private void LoginDialog_CloseButtonClick (ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    private void LoginDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         _loginCts?.Cancel();
     }
 
-    private async void LoginDialog_PrimaryButtonClick (ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    private async void LoginDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        var deferral =  args.GetDeferral();
+        var deferral = args.GetDeferral();
         _loginCts = new();
 
         // 验证输入
@@ -53,15 +52,15 @@ public sealed partial class LoginDialog : ContentDialog
 
         IsLoggingIn = true;
         IsLoginFailed = false;
-        
+
         try
         {
             System.Diagnostics.Debug.WriteLine($"尝试登录: 用户名={Username}");
-            
+
             bool loginSuccess = await App.AuthService.LoginAsync(Username, Password, _loginCts.Token);
-            
+
             System.Diagnostics.Debug.WriteLine($"登录结果: {(loginSuccess ? "成功" : "失败")}");
-            
+
             if (loginSuccess)
             {
                 // 登录成功，允许对话框关闭

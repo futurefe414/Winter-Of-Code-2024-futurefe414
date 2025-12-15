@@ -4,17 +4,18 @@ using Microsoft.UI.Xaml.Navigation;
 using Windows.System;
 
 namespace SastImg.Client.Views;
+
 public sealed partial class ShellPage : Page
 {
     private ShellPageViewModel vm = new();
 
-    public ShellPage ()
+    public ShellPage()
     {
         this.InitializeComponent();
         // Default to home page
         MainFrame.Navigate(typeof(HomeView));
         NavView.SelectedItem = NavView.MenuItems[0];
-        
+
         // Listen to navigation events to update back button state
         MainFrame.Navigated += OnNavigated;
     }
@@ -33,11 +34,14 @@ public sealed partial class ShellPage : Page
         }
     }
 
-    private async void NavigationView_ItemInvoked (NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    private async void NavigationView_ItemInvoked(
+        NavigationView sender,
+        NavigationViewItemInvokedEventArgs args
+    )
     {
-        if ( args.InvokedItemContainer is NavigationViewItem item )
+        if (args.InvokedItemContainer is NavigationViewItem item)
         {
-            switch ( item.Tag )
+            switch (item.Tag)
             {
                 case "Home":
                     MainFrame.Navigate(typeof(HomeView));
@@ -49,10 +53,11 @@ public sealed partial class ShellPage : Page
                     MainFrame.Navigate(typeof(SettingsView));
                     break;
                 case "GitHub":
-                    await Launcher.LaunchUriAsync(new Uri("https://github.com/NJUPT-SAST-Csharp/Winter-Of-Code-2024"));
+                    await Launcher.LaunchUriAsync(
+                        new Uri("https://github.com/NJUPT-SAST-Csharp/Winter-Of-Code-2024")
+                    );
                     break;
             }
-        };
+        }
     }
-
 }

@@ -15,12 +15,16 @@ public class AuthService()
     public bool IsLoggedIn => _isLoggedIn;
     public string? Username => _username;
 
+    private static readonly Dictionary<string, string> LocalTestAccounts;
 
-    private static readonly Dictionary<string, string> LocalTestAccounts = new()
+    static AuthService()
     {
-        { "test", "123456" },
-        { "admin", "123456" }
-    };
+        LocalTestAccounts = new Dictionary<string, string>
+        {
+            { "test", "123456" },
+            { "admin", "123456" }
+        };
+    }
 
     /// <summary>
     /// 登录，如果登录成功则返回 true，登录状态会保存在该Service中

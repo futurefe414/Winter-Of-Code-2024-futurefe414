@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <RootNamespace>SastImg.Client</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x64;ARM64</Platforms>
-    <RuntimeIdentifier Condition="'$(Platform)' == 'x64'">win-x64</RuntimeIdentifier>
-    <RuntimeIdentifier Condition="'$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
-    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+    <PublishProfile>win-x64.pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <Nullable>enable</Nullable>
@@ -21,12 +19,14 @@
     <Content Include="Assets\**" />
     <Compile Remove="Views\BlankPage1.xaml.cs" />
     <Compile Remove="Views\ImageViewModel.xaml.cs" />
+    <Compile Remove="Views\TestView.xaml.cs" />
     <None Remove="Views\BlankPage1.xaml" />
     <None Remove="Views\ImageView.xaml" />
     <None Remove="Views\ImageViewModel.xaml" />
     <None Remove="Views\TestView.xaml" />
     <Page Remove="Views\BlankPage1.xaml" />
     <Page Remove="Views\ImageViewModel.xaml" />
+    <Page Remove="Views\TestView.xaml" />
     <Manifest Include="$(ApplicationManifest)" />
     <PackageReference Include="CommunityToolkit.Labs.WinUI.TitleBar" Version="0.0.1-build.1830" />
     <PackageReference
@@ -55,11 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\ImageView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\TestView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

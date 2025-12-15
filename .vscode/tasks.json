@@ -9,9 +9,45 @@
                 "build",
                 "${workspaceFolder}/Winter-Of-Code-2024.sln",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+                "/consoleloggerparameters:NoSummary;ForceNoAlign",
+                "/p:Platform=x64"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
+            "label": "build-x64",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Winter-Of-Code-2024.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign",
+                "/p:Platform=x64",
+                "/p:Configuration=Debug"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "deploy-and-run",
+            "command": "powershell",
+            "type": "shell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/deploy-and-run.ps1"
+            ],
+            "problemMatcher": [],
+            "dependsOn": "build-x64"
         },
         {
             "label": "publish",
